@@ -1,0 +1,58 @@
+Sub StockCounter()
+
+Dim Counter As Integer
+Dim Total As Double
+Dim StartValue As Double
+Dim EndValue As Double
+
+For Each W In Worksheets
+Total = 0
+StartValue = Range("C2").Value
+Counter = 2
+
+W.Range("I1").Value = "Ticker"
+W.Range("J1").Value = "Quarterly Change"
+W.Range("K1").Value = "Percent Change"
+W.Range("L1").Value = "Total Stock Volume"
+
+W.Range("N2").Value = "Greatest % Increase"
+W.Range("N3").Value = "Greatest % Decrease"
+W.Range("N4").Value = "Greatest Total Volume"
+W.Range("O1").Value = "Ticker"
+W.Range("P1").Value = "Value"
+
+
+For i = 1 To 93000
+    Total = Total + W.Cells(i + 1, 7).Value
+    If W.Cells(i + 1, 1).Value <> W.Cells(i + 2, 1).Value Then
+        W.Cells(Counter, 9).Value = W.Cells(i + 1, 1)
+        EndValue = W.Cells(i + 1, 6)
+        W.Cells(Counter, 10).Value = EndValue - StartValue
+        
+        If W.Cells(Counter, 10).Value > 0 Then
+            W.Cells(Counter, 10).Interior.ColorIndex = 4
+        Else
+            W.Cells(Counter, 10).Interior.ColorIndex = 3
+        End If
+        
+        W.Cells(Counter, 11).Value = ((EndValue - StartValue) / StartValue)
+        If W.Range("P2").Value < W.Cells(Counter, 11).Value Then
+            W.Range("P2").Value = W.Cells(Counter, 11).Value
+            W.Range("O2").Value = W.Cells(Counter, 9).Value
+        ElseIf W.Range("P3").Value > W.Cells(Counter, 11).Value Then
+            W.Range("P3").Value = W.Cells(Counter, 11).Value
+            W.Range("O3").Value = W.Cells(Counter, 9).Value
+        End If
+        W.Cells(Counter, 12).Value = Total
+        If W.Range("P4").Value < Total Then
+            W.Range("P4").Value = Total
+            W.Range("O4").Value = W.Cells(Counter, 9)
+        End If
+        Total = 0
+        StartValue = W.Cells(i + 2, 3)
+        Counter = Counter + 1
+    End If
+    
+Next i
+Next W
+End Sub
